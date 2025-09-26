@@ -8,7 +8,6 @@ def on_press(key, injected):
         elif key.char == 'a':
             print("a was pressed")
 
-
     except:
         print("invalid input (what did you press?): {}".format(key))
 

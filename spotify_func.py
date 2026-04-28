@@ -4,7 +4,7 @@ import dotenv
 import os
 import threading
 import webbrowser
-
+import json
 from callback_server import AuthCodeCatcher
 
 
@@ -13,7 +13,7 @@ dotenv.load_dotenv()
 client_id = os.getenv("client_id")
 client_secret = os.getenv("client_secret")
 redirect_uri = "http://127.0.0.1:8888/callback"
-scope = "user-read-currently-playing user-read-playback-state"
+scope = "user-read-currently-playing user-read-playback-state playlist-modify-public"
 
 headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -32,23 +32,6 @@ def get_auth_url():
     }
     url = base_url + "?" + urllib.parse.urlencode(params)
     return url
-
-
-# def get_token():
-#     headers = {
-#         'Content-Type': 'application/x-www-form-urlencoded'
-#     }
-#     data = {
-#         'grant_type': 'client_credentials',
-#         'client_id': client_id,
-#         'client_secret': client_secret
-#     }
-
-#     response = requests.post(token_url, headers=headers, data=data)
-#     if response.status_code == 200:
-#         token_info = response.json()
-#         print(token_info)
-#         return token_info["access_token"]
     
 def exchange_code_for_token(code):
     data = {
@@ -77,9 +60,7 @@ def authorize_user():
         print("Authorization code received: ", catcher.auth_code)
         tokens = exchange_code_for_token(catcher.auth_code)
         server_thread.join()
-        return [catcher.auth_code, tokens.get("refresh_token")]
-    
-
+        return [catcher.auth_code, tokens.get("refresh_token"), tokens["access_token"]]
 
 def get_curr_track(token):
     url = "https://api.spotify.com/v1/me/player/currently-playing"
@@ -88,10 +69,32 @@ def get_curr_track(token):
     }
     response = requests.get(url, headers=headers)
 
-    print(response.json())
+    if response.status_code == 200: 
+        data = json.loads(response.text)
+        print(data['item']['name'])
+        print(data['item']['uri'])
 
 
+def playlist_exists():
+    pass    
+
+def create_playlist(playlistName, token):
+    url = "https://api.spotify.com/v1/me/playlists"
+    headers = {
+        'Authorization': f'Bearer {token}'
+    }
+    data = {
+        "name": f"{playlistName}"
+    }
+    response = requests.post(url, headers=headers, json=data)
+
+    if response.status_code == 201:
+        print("playlist created successfully")
 
 
-print(authorize_user())
+[auth_code, refresh_token, access_token] = authorize_user()
+get_curr_track(access_token)
+create_playlist("test",access_token)
+
+
 

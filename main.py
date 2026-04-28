@@ -15,7 +15,7 @@ def on_release(key, injected):
     # print('{} released; it was {}'.format(
     #     key, 'faked' if injected else 'not faked'))
     if key == keyboard.Key.esc:
-        # Stop listener
+        # Stop listener if escape key is pressed
         return False
 
 # Collect events until released

@@ -1,1 +1,3 @@
 Simple project to play with spotify's api stuff. Ideally how this should work is that you should be able to press a button (tbd) which should add the current playing track on spotify to a given playlist.
+
+Be sure to create an .env file that should have a variable named "client_id" and another variable named "client_secret", each referring to your spotify user id.

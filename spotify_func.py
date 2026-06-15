@@ -113,8 +113,8 @@ def add_track(track, playlist, token):
         print("track added successfully")
         return response.json
 
-[auth_code, refresh_token, access_token] = authorize_user()
-track_id = get_curr_track(access_token)
-playlist_id = create_playlist("test",access_token)
-add_track(track_id, playlist_id, access_token)
+# [auth_code, refresh_token, access_token] = authorize_user()
+# track_id = get_curr_track(access_token)
+# playlist_id = create_playlist("test",access_token)
+# add_track(track_id, playlist_id, access_token)
 

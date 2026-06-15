@@ -72,7 +72,7 @@ def get_curr_track(token):
     if response.status_code == 200: 
         data = json.loads(response.text)
         print(data['item']['name'])
-        print(data['item']['uri'])
+        return data['item']['uri']
 
 
 def playlist_exists():
@@ -91,13 +91,30 @@ def create_playlist(playlistName, token):
     if response.status_code == 201:
         print("playlist created successfully")
         data = json.loads(response.text)
-        return data['owner']['uri']
+        return data['uri']
 
-def add_track():
-    pass
+def add_track(track, playlist, token):
+
+    pid = playlist.split(':')[2]
+    url = f"https://api.spotify.com/v1/playlists/{pid}/items"
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
+    }
+
+    data = {
+        "uris": [track],
+        "position": 0
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+
+    if response.status_code == 201:
+        print("track added successfully")
+        return response.json
 
 [auth_code, refresh_token, access_token] = authorize_user()
-get_curr_track(access_token)
-create_playlist("test",access_token)
-
+track_id = get_curr_track(access_token)
+playlist_id = create_playlist("test",access_token)
+add_track(track_id, playlist_id, access_token)
 

@@ -90,11 +90,14 @@ def create_playlist(playlistName, token):
 
     if response.status_code == 201:
         print("playlist created successfully")
+        data = json.loads(response.text)
+        return data['owner']['uri']
 
+def add_track():
+    pass
 
 [auth_code, refresh_token, access_token] = authorize_user()
 get_curr_track(access_token)
 create_playlist("test",access_token)
-
 
 

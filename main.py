@@ -2,7 +2,7 @@ from pynput import keyboard
 import spotify_func
 
 def on_press(key):
-    global playlist_created, playlist_id
+    global playlist_created, playlist_id, track_list
     try:
         if not hasattr(key, 'char'):
             pass
@@ -13,7 +13,10 @@ def on_press(key):
                 playlist_id = spotify_func.create_playlist("test", access_token)
                 playlist_created = True
             track_id = spotify_func.get_curr_track(access_token)
-            spotify_func.add_track(track_id, playlist_id, access_token)
+
+            if track_id not in track_list:
+                spotify_func.add_track(track_id, playlist_id, access_token)
+                track_list.add(track_id)
 
 
     except:
@@ -28,6 +31,7 @@ def on_release(key):
 
 playlist_created = False
 playlist_id = None
+track_list = set()
 [auth_code, refresh_token, access_token] = spotify_func.authorize_user()
 # Collect events until released
 with keyboard.Listener(
